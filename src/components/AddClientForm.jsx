@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { agregarCliente } from "../services/clientesService";
 
 const AddClientForm = ({ onClose }) => {
-  // Estado para los campos del formulario
   const [formData, setFormData] = useState({
     id: "",
     nombreApellido: "",
@@ -14,19 +13,16 @@ const AddClientForm = ({ onClose }) => {
     telefono2: "",
   });
 
-  // Manejar los cambios en los campos del formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // Manejar el envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await agregarCliente(formData);
       alert("Cliente agregado con éxito");
-      // Limpiar el formulario
       setFormData({
         id: "",
         nombreApellido: "",
@@ -44,93 +40,100 @@ const AddClientForm = ({ onClose }) => {
   };
 
   return (
-    // <div className="flex w-screen h-screen bg-gray-100 top-0 opacity-90">
-    <div className="p-4 w-[90%] h-[90%] flex justify-center items-center">
-      <h2 className="text-xl font-bold mb-4">Agregar Nuevo Cliente</h2>
-      <button className="rounded-full p-2 " onClick={onClose}>
-        X
-      </button>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          name="id"
-          value={formData.id}
-          onChange={handleChange}
-          placeholder="ID del Cliente"
-          required
-          className="p-2 border rounded"
-        />
-        <input
-          type="text"
-          name="nombreApellido"
-          value={formData.nombreApellido}
-          onChange={handleChange}
-          placeholder="Nombre y Apellido"
-          required
-          className="p-2 border rounded"
-        />
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="Email"
-          required
-          className="p-2 border rounded"
-        />
-        <input
-          type="number"
-          name="deuda"
-          value={formData.deuda}
-          onChange={handleChange}
-          placeholder="Deuda"
-          required
-          className="p-2 border rounded"
-        />
-        <input
-          type="text"
-          name="nombreEmpresa"
-          value={formData.nombreEmpresa}
-          onChange={handleChange}
-          placeholder="Nombre Empresa"
-          required
-          className="p-2 border rounded"
-        />
-        <input
-          type="text"
-          name="localidad"
-          value={formData.localidad}
-          onChange={handleChange}
-          placeholder="Localidad"
-          required
-          className="p-2 border rounded"
-        />
-        <input
-          type="tel"
-          name="telefono1"
-          value={formData.telefono1}
-          onChange={handleChange}
-          placeholder="Teléfono 1"
-          required
-          className="p-2 border rounded"
-        />
-        <input
-          type="tel"
-          name="telefono2"
-          value={formData.telefono2}
-          onChange={handleChange}
-          placeholder="Teléfono 2"
-          className="p-2 border rounded"
-        />
-        <button
-          type="submit"
-          className="px-4 py-2 bg-blue-500 text-white rounded"
-        >
-          Agregar Cliente
-        </button>
-      </form>
+    <div className="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-75">
+      <div className="bg-white rounded-lg shadow-lg p-8 max-w-lg w-full">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-semibold text-gray-800">
+            Agregar Nuevo Cliente
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600"
+          >
+            &#x2715;
+          </button>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="text"
+            name="id"
+            value={formData.id}
+            onChange={handleChange}
+            placeholder="ID del Cliente"
+            required
+            className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="text"
+            name="nombreApellido"
+            value={formData.nombreApellido}
+            onChange={handleChange}
+            placeholder="Nombre y Apellido"
+            required
+            className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Email"
+            required
+            className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="number"
+            name="deuda"
+            value={formData.deuda}
+            onChange={handleChange}
+            placeholder="Deuda"
+            required
+            className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="text"
+            name="nombreEmpresa"
+            value={formData.nombreEmpresa}
+            onChange={handleChange}
+            placeholder="Nombre Empresa"
+            required
+            className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="text"
+            name="localidad"
+            value={formData.localidad}
+            onChange={handleChange}
+            placeholder="Localidad"
+            required
+            className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="tel"
+            name="telefono1"
+            value={formData.telefono1}
+            onChange={handleChange}
+            placeholder="Teléfono 1"
+            required
+            className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="tel"
+            name="telefono2"
+            value={formData.telefono2}
+            onChange={handleChange}
+            placeholder="Teléfono 2"
+            className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            type="submit"
+            className="w-full py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition duration-300"
+          >
+            Agregar Cliente
+          </button>
+        </form>
+      </div>
     </div>
-    // </div>
   );
 };
 
