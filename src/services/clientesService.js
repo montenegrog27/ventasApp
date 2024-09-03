@@ -1,10 +1,10 @@
-import { collection, doc, setDoc, getDocs, getDoc } from "firebase/firestore";
+import { collection, doc, getDocs, getDoc, addDoc } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 
 const clientesCollectionRef = collection(db, "clientes");
 
 export const agregarCliente = async (cliente) => {
-  return await setDoc(doc(clientesCollectionRef, cliente.id), cliente);
+  return await addDoc(clientesCollectionRef, cliente);
 };
 
 export const obtenerClientes = async () => {

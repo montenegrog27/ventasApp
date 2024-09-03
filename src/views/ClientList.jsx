@@ -19,7 +19,7 @@ const ClientList = () => {
       }
     };
     fetchClientes();
-  }, []);
+  }, [clientes]);
 
   const onClose = () => {
     setShowModal(false);
@@ -50,6 +50,9 @@ const ClientList = () => {
           <thead>
             <tr className="w-full bg-gray-100 border-b border-gray-200">
               <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                id
+              </th>
+              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
                 Nombre y Apellido
               </th>
               <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
@@ -75,6 +78,9 @@ const ClientList = () => {
           <tbody>
             {paginatedClientes.map((cliente) => (
               <tr key={cliente.id} className="border-b border-gray-200">
+                <td className="px-4 py-2 text-sm text-gray-700">
+                  {cliente.id}
+                </td>
                 <td className="px-4 py-2 text-sm text-gray-700">
                   {cliente.nombreApellido}
                 </td>

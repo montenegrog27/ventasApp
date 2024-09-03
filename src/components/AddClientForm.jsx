@@ -3,7 +3,6 @@ import { agregarCliente } from "../services/clientesService";
 
 const AddClientForm = ({ onClose }) => {
   const [formData, setFormData] = useState({
-    id: "",
     nombreApellido: "",
     email: "",
     deuda: "",
@@ -24,7 +23,6 @@ const AddClientForm = ({ onClose }) => {
       await agregarCliente(formData);
       alert("Cliente agregado con éxito");
       setFormData({
-        id: "",
         nombreApellido: "",
         email: "",
         deuda: "",
@@ -33,6 +31,7 @@ const AddClientForm = ({ onClose }) => {
         telefono1: "",
         telefono2: "",
       });
+      onClose();
     } catch (error) {
       console.error("Error al agregar cliente:", error);
       alert("Error al agregar cliente");
@@ -54,15 +53,6 @@ const AddClientForm = ({ onClose }) => {
           </button>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            name="id"
-            value={formData.id}
-            onChange={handleChange}
-            placeholder="ID del Cliente"
-            required
-            className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
           <input
             type="text"
             name="nombreApellido"
@@ -87,7 +77,6 @@ const AddClientForm = ({ onClose }) => {
             value={formData.deuda}
             onChange={handleChange}
             placeholder="Deuda"
-            required
             className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <input
