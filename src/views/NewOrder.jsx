@@ -9,7 +9,9 @@ const NewOrder = () => {
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-gray-50 rounded-lg shadow-md">
-      <h1 className="text-3xl font-semibold text-gray-900 mb-6">Nueva Venta</h1>
+      <h1 className="text-3xl font-semibold text-gray-900 mb-6">
+        Nuevo Pedido
+      </h1>
       <AddOrderForm onClose={handleClose} />
     </div>
   );

@@ -35,13 +35,15 @@ const Orders = () => {
     navigate("/neworder");
   };
 
+  console.log("pedidos", ordenes);
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Listado de Órdenes</h1>
       <div className="mb-4">
         <button
           onClick={handleAddOrder}
-          className="px-4 py-2 bg-blue-500 text-white rounded"
+          className="px-4 py-2 bg-custom-blue text-white rounded"
         >
           Nuevo Pedido
         </button>
@@ -76,7 +78,7 @@ const Orders = () => {
                   {orden.fecha}
                 </td>
                 <td className="px-4 py-2 text-sm text-gray-700">
-                  {orden.name}
+                  {orden.cliente}
                 </td>
                 <td className="px-4 py-2 text-sm text-gray-700">
                   {orden.total}

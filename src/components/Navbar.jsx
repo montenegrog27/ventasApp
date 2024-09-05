@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { auth } from "../services/firebaseConfig";
+import logo from "../assets/logo2.png"; // Asegúrate de que la ruta al logo sea correcta
 
 function Navbar() {
   const navigate = useNavigate();
@@ -18,74 +19,71 @@ function Navbar() {
 
   const isActive = (path) =>
     location.pathname === path
-      ? "text-blue-600 border-blue-500"
-      : "text-gray-700 hover:text-gray-900";
+      ? "bg-gray-700 text-white"
+      : "text-gray-200 hover:bg-gray-700 hover:text-white";
 
   return (
-    <nav className="bg-white border-b border-gray-200">
+    <nav className="bg-black bg-opacity-70 border-b border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex">
-            <div className="flex-shrink-0 flex items-center">
-              <span className="text-gray-900 text-xl font-semibold">
-                Mi Empresa
-              </span>
-            </div>
-            <div className="hidden sm:flex sm:space-x-8 ml-10">
-              <a
-                href="/home"
-                className={`px-3 py-2 text-sm font-medium border-b-2 ${isActive(
-                  "/home"
-                )}`}
-              >
-                Home
-              </a>
-              <a
-                href="/clientes"
-                className={`px-3 py-2 text-sm font-medium border-b-2 ${isActive(
-                  "/clientes"
-                )}`}
-              >
-                Clientes
-              </a>
-              <a
-                href="/orders"
-                className={`px-3 py-2 text-sm font-medium border-b-2 ${isActive(
-                  "/orders"
-                )}`}
-              >
-                Pedidos
-              </a>
-              <a
-                href="/loadlist"
-                className={`px-3 py-2 text-sm font-medium border-b-2 ${isActive(
-                  "/loadlist"
-                )}`}
-              >
-                Cargas
-              </a>
-              <a
-                href="/saleslist"
-                className={`px-3 py-2 text-sm font-medium border-b-2 ${isActive(
-                  "/saleslist"
-                )}`}
-              >
-                Ventas
-              </a>
-              <a
-                href="/cobranzas"
-                className={`px-3 py-2 text-sm font-medium border-b-2 ${isActive(
-                  "/cobranzas"
-                )}`}
-              >
-                Cobranzas
-              </a>
-            </div>
+        <div className="flex justify-between items-center h-16">
+          <div className="flex items-center">
+            <img src={logo} alt="Logo" className="h-12 mr-4" />
+            <span className="text-white text-xl font-semibold">M&Cia</span>
           </div>
-          <div className="hidden sm:flex sm:items-center">
+          <div className="hidden sm:flex sm:space-x-8">
+            <a
+              href="/home"
+              className={`px-4 py-2 text-sm font-medium rounded-lg transition duration-300 ${isActive(
+                "/home"
+              )}`}
+            >
+              Home
+            </a>
+            <a
+              href="/clientes"
+              className={`px-4 py-2 text-sm font-medium rounded-lg transition duration-300 ${isActive(
+                "/clientes"
+              )}`}
+            >
+              Clientes
+            </a>
+            <a
+              href="/orders"
+              className={`px-4 py-2 text-sm font-medium rounded-lg transition duration-300 ${isActive(
+                "/orders"
+              )}`}
+            >
+              Pedidos
+            </a>
+            <a
+              href="/loadlist"
+              className={`px-4 py-2 text-sm font-medium rounded-lg transition duration-300 ${isActive(
+                "/loadlist"
+              )}`}
+            >
+              Cargas
+            </a>
+            <a
+              href="/saleslist"
+              className={`px-4 py-2 text-sm font-medium rounded-lg transition duration-300 ${isActive(
+                "/saleslist"
+              )}`}
+            >
+              Ventas
+            </a>
+            <a
+              href="/cobranzas"
+              className={`px-4 py-2 text-sm font-medium rounded-lg transition duration-300 ${isActive(
+                "/cobranzas"
+              )}`}
+            >
+              Cobranzas
+            </a>
+          </div>
+          <div className="hidden sm:flex items-center">
             <button
               onClick={handleLogout}
-              className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
+              className="bg-gray-800 hover:bg-gray-900 text-white font-medium py-2 px-4 rounded-lg transition duration-300"
             >
               Cerrar Sesión
             </button>

@@ -10,6 +10,7 @@ import Navbar from "./components/Navbar";
 import NewLoad from "./views/NewLoad";
 import NewOrder from "./views/NewOrder";
 import Orders from "./views/Orders";
+import CollectionList from "./views/CollectionList";
 
 function App() {
   return (
@@ -58,6 +59,15 @@ function App() {
             <PrivateRoute>
               <Navbar />
               <SalesList />
+            </PrivateRoute>
+          }
+        />{" "}
+        <Route
+          path="/cobranzas"
+          element={
+            <PrivateRoute>
+              <Navbar />
+              <CollectionList />
             </PrivateRoute>
           }
         />{" "}

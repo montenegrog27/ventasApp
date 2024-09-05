@@ -49,14 +49,14 @@ const LoadList = () => {
   const paginatedCargas = cargas.slice(startIndex, endIndex);
   const totalPages = Math.ceil(cargas.length / PAGE_SIZE);
 
-  console.log(pedidos);
+  console.log("pedidos de la carga", pedidos);
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Listado de Cargas</h1>
       <div className="mb-4">
         <button
           onClick={() => setShowModal(true)}
-          className="px-4 py-2 bg-blue-500 text-white rounded"
+          className="px-4 py-2 bg-custom-blue text-white rounded"
         >
           Agregar Carga
         </button>
@@ -66,16 +66,19 @@ const LoadList = () => {
           <thead>
             <tr className="w-full bg-gray-100 border-b border-gray-200">
               <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                Fecha
+              </th>
+              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
                 Nombre
               </th>
               <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
                 Descripción
               </th>
               <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                Fecha
+                Destino
               </th>
               <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                Cantidad
+                Estado
               </th>
             </tr>
           </thead>
@@ -87,16 +90,19 @@ const LoadList = () => {
                 onClick={() => handleCargaClick(carga)}
               >
                 <td className="px-4 py-2 text-sm text-gray-700">
-                  {carga.nombre}
+                  {carga.fecha}
+                </td>
+                <td className="px-4 py-2 text-sm text-gray-700">
+                  {carga.name}
                 </td>
                 <td className="px-4 py-2 text-sm text-gray-700">
                   {carga.description}
                 </td>
                 <td className="px-4 py-2 text-sm text-gray-700">
-                  {carga.fecha}
+                  {carga.destination}
                 </td>
                 <td className="px-4 py-2 text-sm text-gray-700">
-                  {carga.cantidad}
+                  {carga.status}
                 </td>
               </tr>
             ))}
@@ -139,10 +145,10 @@ const LoadList = () => {
                   Pedido ID
                 </th>
                 <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                  Descripción
+                  Cliente
                 </th>
                 <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                  Cantidad
+                  Monto
                 </th>
               </tr>
             </thead>
@@ -153,7 +159,7 @@ const LoadList = () => {
                     {pedido.id}
                   </td>
                   <td className="px-4 py-2 text-sm text-gray-700">
-                    {pedido.description}
+                    {pedido.cliente}
                   </td>
                   <td className="px-4 py-2 text-sm text-gray-700">
                     {pedido.name}

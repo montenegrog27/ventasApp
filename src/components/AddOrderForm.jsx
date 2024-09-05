@@ -3,7 +3,7 @@ import {
   agregarPedido,
   obtenerClientes,
   obtenerProductos,
-  obtenerCargas, // Asegúrate de importar esta función
+  obtenerCargasPendientes,
 } from "../services/pedidosService";
 
 const AddOrderForm = ({ onClose }) => {
@@ -12,18 +12,18 @@ const AddOrderForm = ({ onClose }) => {
     productos: [],
     fecha: "",
     status: "pendiente",
-    carga: "", // Agregar el campo de carga
+    carga: "",
   });
   const [clientes, setClientes] = useState([]);
   const [productos, setProductos] = useState([]);
-  const [cargas, setCargas] = useState([]); // Estado para cargas
+  const [cargas, setCargas] = useState([]);
   const [productoTemp, setProductoTemp] = useState({
     id: "",
     cantidad: "",
     precio: "",
   });
   const [clienteSeleccionado, setClienteSeleccionado] = useState("");
-  const [cargaSeleccionada, setCargaSeleccionada] = useState(""); // Estado para carga seleccionada
+  const [cargaSeleccionada, setCargaSeleccionada] = useState("");
 
   useEffect(() => {
     const fetchClientesYProductosYCargas = async () => {
@@ -31,11 +31,11 @@ const AddOrderForm = ({ onClose }) => {
         const [clientesData, productosData, cargasData] = await Promise.all([
           obtenerClientes(),
           obtenerProductos(),
-          obtenerCargas(), // Obtener las cargas
+          obtenerCargasPendientes(), // Usar la función para obtener cargas pendientes
         ]);
         setClientes(clientesData);
         setProductos(productosData);
-        setCargas(cargasData); // Guardar cargas
+        setCargas(cargasData);
       } catch (error) {
         console.error("Error al obtener datos:", error);
       }
@@ -56,7 +56,6 @@ const AddOrderForm = ({ onClose }) => {
     } else if (name === "status") {
       setFormData({ ...formData, [name]: value });
     } else if (name === "carga") {
-      // Manejo del cambio en el campo de carga
       setCargaSeleccionada(value);
       setFormData({ ...formData, carga: value });
     } else {
@@ -82,7 +81,7 @@ const AddOrderForm = ({ onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const fechaCreacion = new Date().toISOString(); // Formato ISO para la fecha
+      const fechaCreacion = new Date().toISOString();
       const ventaConFecha = {
         ...formData,
         fecha: fechaCreacion,
@@ -97,7 +96,7 @@ const AddOrderForm = ({ onClose }) => {
         carga: "",
       });
       setClienteSeleccionado("");
-      setCargaSeleccionada(""); // Resetear carga seleccionada
+      setCargaSeleccionada("");
       onClose();
     } catch (error) {
       console.error("Error al agregar venta:", error);
@@ -106,126 +105,184 @@ const AddOrderForm = ({ onClose }) => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">
-        Agregar Nueva Venta
-      </h2>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Cliente
-          </label>
-          <select
-            name="cliente"
-            value={clienteSeleccionado}
-            onChange={handleChange}
-            required
-            className="p-3 border border-gray-300 rounded-lg w-full"
+    <div className="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-75">
+      <div className="bg-white rounded-lg shadow-lg p-8 max-w-4xl w-full">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-semibold text-gray-800">
+            Agregar Nueva Venta
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 text-2xl"
           >
-            <option value="" disabled>
-              Seleccionar Cliente
-            </option>
-            {clientes.map((cliente) => (
-              <option key={cliente.id} value={cliente.id}>
-                {cliente.nombreApellido}
-              </option>
-            ))}
-          </select>
+            &times;
+          </button>
         </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Carga
-          </label>
-          <select
-            name="carga"
-            value={cargaSeleccionada}
-            onChange={handleChange}
-            required
-            className="p-3 border border-gray-300 rounded-lg w-full"
-          >
-            <option value="" disabled>
-              Seleccionar Carga
-            </option>
-            {cargas.map((carga) => (
-              <option key={carga.id} value={carga.id}>
-                {carga.name} {/* Ajusta el nombre según el campo de tu carga */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Cliente
+            </label>
+            <select
+              name="cliente"
+              value={clienteSeleccionado}
+              onChange={handleChange}
+              required
+              className="p-3 border border-gray-300 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="" disabled>
+                Seleccionar Cliente
               </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">
-            Agregar Productos
-          </h3>
-          <div className="flex flex-col space-y-4">
-            <div className="flex space-x-4">
-              <select
-                name="id"
-                value={productoTemp.id}
-                onChange={handleProductoChange}
-                className="p-3 border border-gray-300 rounded-lg flex-1"
-              >
-                <option value="" disabled>
-                  Seleccionar Producto
+              {clientes.map((cliente) => (
+                <option key={cliente.id} value={cliente.id}>
+                  {cliente.nombreApellido}
                 </option>
-                {productos.map((producto) => (
-                  <option key={producto.id} value={producto.id}>
-                    {producto.name}
-                  </option>
-                ))}
-              </select>
-              <input
-                type="number"
-                name="cantidad"
-                value={productoTemp.cantidad}
-                onChange={handleProductoChange}
-                placeholder="Cantidad"
-                className="p-3 border border-gray-300 rounded-lg flex-1"
-              />
-              <input
-                type="number"
-                name="precio"
-                value={productoTemp.precio}
-                onChange={handleProductoChange}
-                placeholder="Precio"
-                className="p-3 border border-gray-300 rounded-lg flex-1"
-              />
-              <button
-                type="button"
-                onClick={handleAddProducto}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition duration-300"
-              >
-                Agregar
-              </button>
-            </div>
-            <ul className="space-y-2 mt-4">
-              {formData.productos.map((prod, index) => (
-                <li
-                  key={index}
-                  className="flex justify-between p-3 border border-gray-200 rounded-lg"
-                >
-                  <span>
-                    {productos.find((p) => p.id === prod.id)?.name ||
-                      "Producto Desconocido"}
-                  </span>
-                  <span>
-                    {prod.cantidad} x ${prod.precio}
-                  </span>
-                </li>
               ))}
-            </ul>
+            </select>
           </div>
-        </div>
 
-        <button
-          type="submit"
-          className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition duration-300"
-        >
-          Agregar Venta
-        </button>
-      </form>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Carga
+            </label>
+            <select
+              name="carga"
+              value={cargaSeleccionada}
+              onChange={handleChange}
+              required
+              className="p-3 border border-gray-300 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="" disabled>
+                Seleccionar Carga
+              </option>
+              {cargas.map((carga) => (
+                <option key={carga.id} value={carga.id}>
+                  {carga.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">
+              Agregar Productos
+            </h3>
+            <div className="flex flex-col space-y-4">
+              <div className="flex space-x-4">
+                <select
+                  name="id"
+                  value={productoTemp.id}
+                  onChange={handleProductoChange}
+                  className="p-3 border border-gray-300 rounded-lg flex-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="" disabled>
+                    Seleccionar Producto
+                  </option>
+                  {productos.map((producto) => (
+                    <option key={producto.id} value={producto.id}>
+                      {producto.name}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="number"
+                  name="cantidad"
+                  value={productoTemp.cantidad}
+                  onChange={handleProductoChange}
+                  placeholder="Cantidad"
+                  className="p-3 border border-gray-300 rounded-lg flex-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <input
+                  type="number"
+                  name="precio"
+                  value={productoTemp.precio}
+                  onChange={handleProductoChange}
+                  placeholder="Precio"
+                  className="p-3 border border-gray-300 rounded-lg flex-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddProducto}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  Agregar
+                </button>
+              </div>
+              <ul className="space-y-2">
+                {formData.productos.map((producto, index) => (
+                  <li key={index} className="flex items-center space-x-2">
+                    <span>
+                      Producto ID: {producto.id}, Cantidad: {producto.cantidad},
+                      Precio: {producto.precio}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          productos: formData.productos.filter(
+                            (_, i) => i !== index
+                          ),
+                        })
+                      }
+                      className="text-red-600 hover:text-red-800"
+                    >
+                      &times;
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Fecha
+            </label>
+            <input
+              type="date"
+              name="fecha"
+              value={formData.fecha}
+              onChange={handleChange}
+              required
+              className="p-3 border border-gray-300 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Estado
+            </label>
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              required
+              className="p-3 border border-gray-300 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="pendiente">Pendiente</option>
+              <option value="completado">Completado</option>
+              <option value="cancelado">Cancelado</option>
+            </select>
+          </div>
+
+          <div className="flex justify-end space-x-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Guardar
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

@@ -5,7 +5,7 @@ const AddClientForm = ({ onClose }) => {
   const [formData, setFormData] = useState({
     nombreApellido: "",
     email: "",
-    deuda: "",
+    deuda: "", // Mantén deuda como string temporalmente en el formulario
     nombreEmpresa: "",
     localidad: "",
     telefono1: "",
@@ -20,7 +20,13 @@ const AddClientForm = ({ onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await agregarCliente(formData);
+      // Convertir la deuda a número antes de agregar el cliente
+      const clienteData = {
+        ...formData,
+        deuda: parseFloat(formData.deuda) || 0, // Si no se ingresa deuda, se asigna 0
+      };
+
+      await agregarCliente(clienteData);
       alert("Cliente agregado con éxito");
       setFormData({
         nombreApellido: "",

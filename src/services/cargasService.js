@@ -1,6 +1,6 @@
 // src/services/cargasService.js
 
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, addDoc } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 
 const cargasCollectionRef = collection(db, "cargas");

@@ -1,4 +1,11 @@
-import { collection, doc, getDocs, getDoc, addDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  getDoc,
+  addDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "./firebaseConfig";
 
 const clientesCollectionRef = collection(db, "clientes");
@@ -17,5 +24,9 @@ export const obtenerClientePorId = async (id) => {
   const clienteSnapshot = await getDoc(clienteRef);
   return clienteSnapshot.exists() ? clienteSnapshot.data() : null;
 };
-
-// Otros métodos para actualizar, eliminar clientes...
+export const actualizarDeudaCliente = async (id, nuevaDeuda) => {
+  const clienteRef = doc(db, "clientes", id);
+  return await updateDoc(clienteRef, {
+    deuda: nuevaDeuda,
+  });
+};

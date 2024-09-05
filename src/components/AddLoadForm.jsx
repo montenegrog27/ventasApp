@@ -1,14 +1,35 @@
-import React, { useState } from "react";
-import { agregarCarga } from "../services/cargasService";
+import React, { useState, useEffect } from "react";
+import {
+  agregarCarga,
+  obtenerPedidosPorCarga,
+} from "../services/cargasService";
 
 const AddLoadForm = ({ onClose }) => {
-  // Estado para los campos del formulario
   const [formData, setFormData] = useState({
     nombre: "",
     descripcion: "",
     fecha: "",
-    cantidad: "",
+    destination: "", // Cambiado de cantidad a destination
+    pedidoId: "", // Campo para el pedido seleccionado
+    status: "",
   });
+
+  const [pedidos, setPedidos] = useState([]);
+
+  useEffect(() => {
+    const fetchPedidos = async () => {
+      try {
+        // Suponiendo que la carga ya existe y se puede obtener su ID. Deberías modificar esto según tu lógica
+        const cargaId = "some-carga-id"; // Reemplazar con la lógica para obtener el ID actual
+        const pedidosData = await obtenerPedidosPorCarga(cargaId);
+        setPedidos(pedidosData);
+      } catch (error) {
+        console.error("Error al obtener pedidos:", error);
+      }
+    };
+
+    fetchPedidos();
+  }, []);
 
   // Manejar los cambios en los campos del formulario
   const handleChange = (e) => {
@@ -24,10 +45,12 @@ const AddLoadForm = ({ onClose }) => {
       alert("Carga agregada con éxito");
       // Limpiar el formulario
       setFormData({
-        nombre: "",
+        name: "",
         descripcion: "",
         fecha: "",
-        cantidad: "",
+        destination: "",
+        pedidoId: "",
+        status: "Pendiente",
       });
     } catch (error) {
       console.error("Error al agregar carga:", error);
@@ -36,57 +59,104 @@ const AddLoadForm = ({ onClose }) => {
   };
 
   return (
-    <div className="p-4 w-[90%] h-[90%] flex flex-col bg-white rounded shadow-lg">
-      <h2 className="text-xl font-bold mb-4">Agregar Nueva Carga</h2>
-      <button
-        className="absolute top-4 right-4 text-gray-600"
-        onClick={onClose}
-      >
-        X
-      </button>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          name="nombre"
-          value={formData.nombre}
-          onChange={handleChange}
-          placeholder="Nombre"
-          required
-          className="p-2 border rounded"
-        />
-        <textarea
-          name="descripcion"
-          value={formData.descripcion}
-          onChange={handleChange}
-          placeholder="Descripción"
-          required
-          className="p-2 border rounded"
-          rows="4"
-        />
-        <input
-          type="date"
-          name="fecha"
-          value={formData.fecha}
-          onChange={handleChange}
-          required
-          className="p-2 border rounded"
-        />
-        <input
-          type="number"
-          name="cantidad"
-          value={formData.cantidad}
-          onChange={handleChange}
-          placeholder="Cantidad"
-          required
-          className="p-2 border rounded"
-        />
+    <div className="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-75">
+      <div className="bg-white rounded-lg shadow-lg p-8 max-w-lg w-full relative">
         <button
-          type="submit"
-          className="px-4 py-2 bg-blue-500 text-white rounded"
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl"
+          onClick={onClose}
         >
-          Agregar Carga
+          &times;
         </button>
-      </form>
+        <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+          Agregar Nueva Carga
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Nombre
+            </label>
+            <input
+              type="text"
+              name="nombre"
+              value={formData.nombre}
+              onChange={handleChange}
+              placeholder="Nombre"
+              required
+              className="p-3 border border-gray-300 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Descripción
+            </label>
+            <textarea
+              name="descripcion"
+              value={formData.descripcion}
+              onChange={handleChange}
+              placeholder="Descripción"
+              required
+              className="p-3 border border-gray-300 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              rows="4"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Fecha
+            </label>
+            <input
+              type="date"
+              name="fecha"
+              value={formData.fecha}
+              onChange={handleChange}
+              required
+              className="p-3 border border-gray-300 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Destino
+            </label>
+            <input
+              type="text"
+              name="destination"
+              value={formData.destination}
+              onChange={handleChange}
+              placeholder="Destino"
+              required
+              className="p-3 border border-gray-300 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Seleccionar Pedido
+            </label>
+            <select
+              name="pedidoId"
+              value={formData.pedidoId}
+              onChange={handleChange}
+              className="p-3 border border-gray-300 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Seleccione un pedido</option>
+              {pedidos.map((pedido) => (
+                <option key={pedido.id} value={pedido.id}>
+                  {pedido.nombre} {/* O el campo que desees mostrar */}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <button
+            type="submit"
+            className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition duration-300"
+          >
+            Agregar Carga
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
