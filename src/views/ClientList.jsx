@@ -266,8 +266,11 @@ const ClientList = () => {
       {/* Modal de Registro de Pago */}
       {paymentModal && (
         <PaymentModal
-          onClose={() => setPaymentModal(false)}
-          onSubmit={handlePaymentSubmit}
+          selectedCliente={selectedCliente}
+          paymentModal={paymentModal}
+          setPaymentModal={setPaymentModal}
+          handlePaymentSubmit={handlePaymentSubmit}
+          setPaymentAmount={setPaymentAmount}
         />
       )}
 

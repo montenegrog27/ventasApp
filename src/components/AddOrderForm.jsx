@@ -70,10 +70,24 @@ const AddOrderForm = ({ onClose }) => {
 
   const handleAddProducto = () => {
     if (productoTemp.id && productoTemp.cantidad && productoTemp.precio) {
+      // Busca el producto en el estado `productos` por su id
+      const productoSeleccionado = productos.find(
+        (producto) => producto.id === productoTemp.id
+      );
+
+      // Incluye el nombre del producto en el objeto que se va a agregar a `formData`
+      const productoConNombre = {
+        ...productoTemp,
+        nombre: productoSeleccionado ? productoSeleccionado.name : "", // Asegurarse de que el nombre esté presente
+      };
+
+      // Agregar el producto con nombre al estado `formData`
       setFormData({
         ...formData,
-        productos: [...formData.productos, productoTemp],
+        productos: [...formData.productos, productoConNombre],
       });
+
+      // Resetear el formulario temporal de productos
       setProductoTemp({ id: "", cantidad: "", precio: "" });
     }
   };
@@ -104,6 +118,7 @@ const AddOrderForm = ({ onClose }) => {
     }
   };
 
+  console.log(productoTemp);
   return (
     <div className="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-75">
       <div className="bg-white rounded-lg shadow-lg p-8 max-w-4xl w-full">
