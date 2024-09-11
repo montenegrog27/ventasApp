@@ -9,6 +9,8 @@ import {
 } from "../services/pagosService";
 import AddClientForm from "../components/AddClientForm";
 import PaymentModal from "../components/PaymentModal";
+import { storage } from "../services/firebaseConfig"; // Importar Firebase Storage
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const PAGE_SIZE = 10;
 
@@ -58,32 +60,93 @@ const ClientList = () => {
     setClientModal(true);
   };
 
+  // const handlePaymentSubmit = async (paymentData) => {
+  //   const { cashAmount, chequeAmount, chequeNumber, chequeDate, totalAmount } =
+  //     paymentData;
+
+  //   try {
+  //     // Registrar el pago en efectivo
+  //     if (cashAmount > 0) {
+  //       await registrarPago(selectedCliente.id, {
+  //         monto: cashAmount,
+  //         metodo: "efectivo",
+  //         numeroCheque: null,
+  //         fechaCobroCheque: null,
+  //       });
+  //     }
+
+  //     // Registrar el pago con cheque (si se ingresó)
+  //     if (chequeAmount > 0) {
+  //       await registrarPago(selectedCliente.id, {
+  //         monto: chequeAmount,
+  //         metodo: "cheque",
+  //         numeroCheque: chequeNumber,
+  //         fechaCobroCheque: chequeDate,
+  //       });
+  //     }
+
+  //     // Actualizar la deuda localmente
+  //     const nuevaDeuda = selectedCliente.deuda - totalAmount;
+  //     await actualizarDeudaCliente(selectedCliente.id, nuevaDeuda);
+
+  //     setClientes((prevClientes) =>
+  //       prevClientes.map((cliente) =>
+  //         cliente.id === selectedCliente.id
+  //           ? { ...cliente, deuda: nuevaDeuda }
+  //           : cliente
+  //       )
+  //     );
+
+  //     setPaymentModal(false);
+  //     setPaymentAmount("");
+  //   } catch (error) {
+  //     console.error("Error al registrar el pago:", error);
+  //   }
+  // };
   const handlePaymentSubmit = async (paymentData) => {
-    const { cashAmount, chequeAmount, chequeNumber, chequeDate, totalAmount } =
-      paymentData;
+    const {
+      cashAmount,
+      chequeAmount,
+      chequeNumber,
+      chequeDate,
+      totalAmount,
+      paymentImage,
+    } = paymentData;
 
     try {
-      // Registrar el pago en efectivo
+      let imageUrl = null;
+
+      // Si hay una imagen, la subimos a Firebase Storage
+      if (paymentImage) {
+        const imageRef = ref(
+          storage,
+          `pagos/${selectedCliente.id}_${Date.now()}`
+        );
+        await uploadBytes(imageRef, paymentImage);
+        imageUrl = await getDownloadURL(imageRef); // Obtenemos la URL de descarga
+      }
+
+      // Registrar el pago en efectivo o cheque, y guardar la URL de la imagen
       if (cashAmount > 0) {
         await registrarPago(selectedCliente.id, {
           monto: cashAmount,
           metodo: "efectivo",
           numeroCheque: null,
           fechaCobroCheque: null,
+          imagen: imageUrl, // Guardar la URL de la imagen
         });
       }
 
-      // Registrar el pago con cheque (si se ingresó)
       if (chequeAmount > 0) {
         await registrarPago(selectedCliente.id, {
           monto: chequeAmount,
           metodo: "cheque",
           numeroCheque: chequeNumber,
           fechaCobroCheque: chequeDate,
+          imagen: imageUrl, // Guardar la URL de la imagen
         });
       }
 
-      // Actualizar la deuda localmente
       const nuevaDeuda = selectedCliente.deuda - totalAmount;
       await actualizarDeudaCliente(selectedCliente.id, nuevaDeuda);
 
@@ -227,7 +290,6 @@ const ClientList = () => {
               <strong>Deuda: </strong>
               {formatCurrency(selectedCliente?.deuda)}
             </p>
-
             {/* Mostrar los pagos del cliente */}
             <h3 className="text-md font-semibold mt-4">Pagos Realizados</h3>
             {pagos.length > 0 ? (
@@ -246,6 +308,18 @@ const ClientList = () => {
                       {new Date(pago.fecha.seconds * 1000).toLocaleDateString()}
                     </p>
                     <p>Monto: {formatCurrency(pago.monto)}</p>
+
+                    {/* Ver la foto si existe */}
+                    {pago.imagen && (
+                      <a
+                        href={pago.imagen}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:underline"
+                      >
+                        Ver Foto
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>
