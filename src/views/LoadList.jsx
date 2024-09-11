@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import {
   obtenerCargas,
   obtenerPedidosPorCarga,
+  actualizarEstadoPedido,
+  actualizarEstadoCarga, // Función para actualizar la carga
 } from "../services/cargasService";
 import AddLoadForm from "../components/AddLoadForm";
 
@@ -49,7 +51,42 @@ const LoadList = () => {
   const paginatedCargas = cargas.slice(startIndex, endIndex);
   const totalPages = Math.ceil(cargas.length / PAGE_SIZE);
 
-  console.log("pedidos de la carga", pedidos);
+  const handleControlarCarga = async () => {
+    try {
+      console.log('Pedidos antes de actualizar:', pedidos);
+      // Cambiar el estado de los pedidos seleccionados a "entregado"
+      const pedidosActualizados = await Promise.all(
+        pedidos.map(async (pedido) => {
+          console.log('Actualizando pedido:', pedido);
+          const pedidoActualizado = await actualizarEstadoPedido(pedido.id, "entregado");
+          console.log('Pedido actualizado:', pedidoActualizado);         
+           return pedidoActualizado;
+        })
+      );
+      console.log('Pedidos actualizados:', pedidosActualizados);
+      // Verificar si todos los pedidos están entregados
+      const todosEntregados = pedidosActualizados.every(
+        (pedido) => pedido && pedido.status === "entregado"
+      );
+  
+      if (todosEntregados) {
+        await actualizarEstadoCarga(selectedCarga.id, "entregado");
+        alert("Todos los pedidos han sido entregados y la carga ha sido marcada como entregada.");
+      } else {
+        alert("Algunos pedidos siguen pendientes.");
+      }
+  
+      // Actualizar el estado de los pedidos
+      setPedidos(pedidosActualizados);
+      setSelectedCarga({ ...selectedCarga, status: todosEntregados ? "entregado" : selectedCarga.status });
+  
+    } catch (error) {
+      console.error("Error al controlar la carga:", error);
+      alert("Hubo un error al controlar la carga.");
+    }
+  };
+  
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Listado de Cargas</h1>
@@ -128,11 +165,13 @@ const LoadList = () => {
           Siguiente
         </button>
       </div>
+
       {showModal && (
         <div className="fixed inset-0 bg-gray-700 bg-opacity-50 flex justify-center items-center z-50">
           <AddLoadForm onClose={onClose} />
         </div>
       )}
+
       {selectedCarga && (
         <div className="mt-8 p-4 border border-gray-200 bg-white rounded">
           <h2 className="text-xl font-bold mb-4">
@@ -148,26 +187,28 @@ const LoadList = () => {
                   Cliente
                 </th>
                 <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                  Monto
+                  Estado
                 </th>
               </tr>
             </thead>
             <tbody>
               {pedidos.map((pedido) => (
                 <tr key={pedido.id} className="border-b border-gray-200">
-                  <td className="px-4 py-2 text-sm text-gray-700">
-                    {pedido.id}
-                  </td>
-                  <td className="px-4 py-2 text-sm text-gray-700">
-                    {pedido.cliente}
-                  </td>
-                  <td className="px-4 py-2 text-sm text-gray-700">
-                    {pedido.name}
-                  </td>
+                  <td className="px-4 py-2 text-sm text-gray-700">{pedido.id}</td>
+                  <td className="px-4 py-2 text-sm text-gray-700">{pedido.cliente}</td>
+                  <td className="px-4 py-2 text-sm text-gray-700">{pedido.status}</td>
                 </tr>
               ))}
             </tbody>
           </table>
+
+          {/* Botón para controlar la carga */}
+          <button
+            onClick={handleControlarCarga}
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Controlar Carga
+          </button>
         </div>
       )}
     </div>

@@ -16,7 +16,9 @@ const Orders = () => {
     const fetchOrdenes = async () => {
       try {
         const data = await obtenerPedidos();
-        setOrdenes(data);
+        // Filtrar solo los pedidos con estado "pendiente"
+        const pedidosPendientes = data.filter((pedido) => pedido.status === "pendiente");
+        setOrdenes(pedidosPendientes);
       } catch (error) {
         console.error("Error al obtener órdenes:", error);
       }
@@ -53,16 +55,12 @@ const Orders = () => {
     setSelectedPedido(null);
   };
 
-  // Calcular el total del pedido a partir de los productos
   const calcularTotalPedido = (productos = []) => {
-    // Asegurarse de que 'productos' sea un array
     if (!Array.isArray(productos)) {
       return 0;
     }
-
     return productos.reduce((total, producto) => {
-      const subtotal =
-        parseFloat(producto.precio) * parseInt(producto.cantidad, 10);
+      const subtotal = parseFloat(producto.precio) * parseInt(producto.cantidad, 10);
       return total + subtotal;
     }, 0);
   };
@@ -79,7 +77,6 @@ const Orders = () => {
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Productos");
 
-    // Añadir los datos del pedido en la primera hoja
     const wsPedido = XLSX.utils.json_to_sheet([
       {
         Cliente: selectedPedido.cliente,
@@ -93,11 +90,9 @@ const Orders = () => {
     XLSX.writeFile(wb, `Pedido_${selectedPedido.numeroOrden}.xlsx`);
   };
 
-  console.log(selectedPedido);
-
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Listado de Órdenes</h1>
+      <h1 className="text-2xl font-bold mb-4">Listado de Órdenes Pendientes</h1>
       <div className="mb-4">
         <button
           onClick={handleAddOrder}
@@ -129,7 +124,7 @@ const Orders = () => {
               <tr
                 key={orden.id}
                 className="border-b border-gray-200 cursor-pointer hover:bg-gray-100"
-                onClick={() => handleOrderClick(orden.id)} // Al hacer clic en la fila, mostrar detalles
+                onClick={() => handleOrderClick(orden.id)}
               >
                 <td className="px-4 py-2 text-sm text-gray-700">
                   {orden.numeroOrden}
@@ -141,18 +136,13 @@ const Orders = () => {
                     year: "2-digit",
                   })}
                 </td>
+                <td className="px-4 py-2 text-sm text-gray-700">{orden.cliente}</td>
                 <td className="px-4 py-2 text-sm text-gray-700">
-                  {orden.cliente}
-                </td>
-                <td className="px-4 py-2 text-sm text-gray-700">
-                  {calcularTotalPedido(orden.productos).toLocaleString(
-                    "es-AR",
-                    {
-                      style: "currency",
-                      currency: "ARS",
-                      minimumFractionDigits: 2,
-                    }
-                  )}
+                  {calcularTotalPedido(orden.productos).toLocaleString("es-AR", {
+                    style: "currency",
+                    currency: "ARS",
+                    minimumFractionDigits: 2,
+                  })}
                 </td>
               </tr>
             ))}
@@ -259,7 +249,6 @@ const Orders = () => {
               </tbody>
             </table>
 
-            {/* Total del Pedido */}
             <p className="mt-4 text-right font-bold">
               Total del Pedido:{" "}
               {calcularTotalPedido(selectedPedido.productos).toLocaleString(

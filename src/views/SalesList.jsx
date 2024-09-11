@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from "react";
-// import { useNavigate } from "react-router-dom";
-import { obtenerVentas } from "../services/ventasService"; // Asegúrate de crear este servicio
+import { obtenerPedidos } from "../services/pedidosService"; // Reemplaza "obtenerVentas" por "obtenerPedidos"
 
 const PAGE_SIZE = 10;
 
 const SalesList = () => {
   const [ventas, setVentas] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  // const navigate = useNavigate(); // Hook para la navegación
 
   useEffect(() => {
     const fetchVentas = async () => {
       try {
-        const data = await obtenerVentas();
-        setVentas(data);
+        const data = await obtenerPedidos(); // Usa la función para obtener pedidos
+        // Filtrar solo los pedidos con estado "entregado"
+        const pedidosEntregados = data.filter((pedido) => pedido.status === "entregado");
+        setVentas(pedidosEntregados);
       } catch (error) {
-        console.error("Error al obtener ventas:", error);
+        console.error("Error al obtener pedidos:", error);
       }
     };
     fetchVentas();
@@ -30,56 +30,26 @@ const SalesList = () => {
   const paginatedVentas = ventas.slice(startIndex, endIndex);
   const totalPages = Math.ceil(ventas.length / PAGE_SIZE);
 
-  // const handleAddSale = () => {
-  //   navigate("/neworder"); // Redirige a la vista NewSale
-  // };
-
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Listado de Ventas</h1>
-      {/* <div className="mb-4">
-        <button
-          onClick={handleAddSale}
-          className="px-4 py-2 bg-blue-500 text-white rounded"
-        >
-          Agregar Venta
-        </button>
-      </div> */}
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-200">
           <thead>
             <tr className="w-full bg-gray-100 border-b border-gray-200">
-              {/* Ajusta los encabezados según los datos de ventas */}
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                Producto
-              </th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                Cantidad
-              </th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                Precio
-              </th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                Fecha
-              </th>
+              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Producto</th>
+              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Cantidad</th>
+              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Precio</th>
+              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Fecha</th>
             </tr>
           </thead>
           <tbody>
             {paginatedVentas.map((venta) => (
               <tr key={venta.id} className="border-b border-gray-200">
-                {/* Ajusta los datos según los datos de ventas */}
-                <td className="px-4 py-2 text-sm text-gray-700">
-                  {venta.description}
-                </td>
-                <td className="px-4 py-2 text-sm text-gray-700">
-                  {venta.cantidad}
-                </td>
-                <td className="px-4 py-2 text-sm text-gray-700">
-                  {venta.precio}
-                </td>
-                <td className="px-4 py-2 text-sm text-gray-700">
-                  {venta.fecha}
-                </td>
+                <td className="px-4 py-2 text-sm text-gray-700">{venta.producto}</td>
+                <td className="px-4 py-2 text-sm text-gray-700">{venta.cantidad}</td>
+                <td className="px-4 py-2 text-sm text-gray-700">{venta.precio}</td>
+                <td className="px-4 py-2 text-sm text-gray-700">{venta.fecha}</td>
               </tr>
             ))}
           </tbody>
